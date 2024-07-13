@@ -21,9 +21,9 @@ type ModelDetailType = {
   avatar: string;
   inputs: InputData[];
   outputs: {
-      name: string
-      description: string;
-      type: string;
+    name: string;
+    description: string;
+    type: string;
   }[];
 };
 
@@ -75,9 +75,12 @@ const ModelDetail = ({ id }: { id: string }) => {
           ...previousData,
           {
             inputData: formInputData,
-            response: res.data.data?.["Generated Text"] || res.data.data?.["Transcription"] || res.data.data?.["Generated Image"],
+            response:
+              res.data.data?.["Generated Text"] ||
+              res.data.data?.["Transcription"] ||
+              res.data.data?.["Generated Image"],
             inputs: modelData?.inputs || [],
-            id: Date.now() + "test"
+            id: Date.now() + "test",
           },
         ]);
       })
@@ -91,7 +94,7 @@ const ModelDetail = ({ id }: { id: string }) => {
         setModelData(res.data.data);
       })
       .catch(() => {
-        showToast.error("Something went wront while fetching data")
+        showToast.error("Something went wront while fetching data");
       })
       .finally(() => {
         setLoadData(false);
@@ -118,55 +121,63 @@ const ModelDetail = ({ id }: { id: string }) => {
     setError(newError);
   };
 
-  if(loadData ) {
-    return <LoaderComponent/>
+  if (loadData) {
+    return <LoaderComponent />;
   }
 
   return (
     <div className="px-4 flex flex-col justify-between h-[88vh] py-2">
       <div className="h-3/4 ">
-        <ChatComponent previousData={previousData} avatar={modelData?.avatar} type={modelData?.outputs?.[0]?.type || ''} />
+        <ChatComponent
+          previousData={previousData}
+          avatar={modelData?.avatar}
+          type={modelData?.outputs?.[0]?.type || ""}
+        />
       </div>
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-2">
         {modelData?.inputs.map((ele) => {
           if (ele.type === "audio") {
             return (
               <UploadComponent
+                key={ele.name}
                 onChange={(e) => handleFile(e, ele.name)}
                 label={ele.name}
                 file={formInputData?.[ele.name] as File}
                 accept={{
                   "audio/*": [],
                 }}
-                error = {error?.[ele.name] || ''}
+                error={error?.[ele.name] || ""}
               />
             );
           }
           if (ele.type === "video") {
             return (
               <UploadComponent
+                key={ele.name}
                 onChange={(e) => handleFile(e, ele.name)}
                 label={ele.name}
                 file={formInputData?.[ele.name] as File}
                 accept={{
                   "video/*": [],
                 }}
-                error = {error?.[ele.name] || ''}
+                error={error?.[ele.name] || ""}
               />
             );
           }
           if (ele.type === "image") {
             return (
               <UploadComponent
+                key={ele.name}
                 onChange={(e) => handleFile(e, ele.name)}
                 label={ele.name}
                 file={formInputData?.[ele.name] as File}
-                error = {error?.[ele.name] || ''}
+                error={error?.[ele.name] || ""}
               />
             );
           }
           return (
             <Input
+              key={ele.name}
               name={ele.name}
               type={ele.type}
               placeholder={ele.name}
@@ -178,7 +189,11 @@ const ModelDetail = ({ id }: { id: string }) => {
         })}
       </div>
       <button onClick={predictValue} className="w-full btn btn-outline">
-        {loading? <LoaderComponent/>: "Predict Value using " + modelData?.name} 
+        {loading ? (
+          <LoaderComponent />
+        ) : (
+          "Predict Value using " + modelData?.name
+        )}
       </button>
     </div>
   );
